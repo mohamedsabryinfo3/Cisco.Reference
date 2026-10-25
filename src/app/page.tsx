@@ -6,6 +6,7 @@ import type { Section, SubSection, Command } from '@/data';
 import { QuestionBank } from '@/components/QuestionBank';
 import { SubnetCalculator } from '@/components/SubnetCalculator';
 import { Flashcards } from '@/components/Flashcards';
+import { Labs } from '@/components/Labs';
 import {
   Search,
   BookOpen,
@@ -49,6 +50,7 @@ import {
   Award,
   ChevronLeft,
   Calculator,
+  Target,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -84,7 +86,7 @@ const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
   Lightbulb,
 };
 
-type ViewMode = 'commands' | 'questions' | 'subnetting' | 'flashcards';
+type ViewMode = 'commands' | 'questions' | 'subnetting' | 'flashcards' | 'labs';
 
 export default function Home() {
   const [viewMode, setViewMode] = useState<ViewMode>('commands');
@@ -276,6 +278,18 @@ export default function Home() {
                   <Layers className="h-3.5 w-3.5" />
                   فلاش كارد
                 </button>
+                <button
+                  onClick={() => setViewMode('labs')}
+                  className={cn(
+                    'flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition',
+                    viewMode === 'labs'
+                      ? 'bg-background shadow-sm text-[#049fd9]'
+                      : 'text-muted-foreground hover:text-foreground'
+                  )}
+                >
+                  <FlaskConical className="h-3.5 w-3.5" />
+                  لاب عملي
+                </button>
               </div>
 
               <Button
@@ -339,6 +353,18 @@ export default function Home() {
             >
               <Layers className="h-3.5 w-3.5" />
               فلاش
+            </button>
+            <button
+              onClick={() => setViewMode('labs')}
+              className={cn(
+                'flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition whitespace-nowrap',
+                viewMode === 'labs'
+                  ? 'bg-background shadow-sm text-[#049fd9]'
+                  : 'text-muted-foreground'
+              )}
+            >
+              <FlaskConical className="h-3.5 w-3.5" />
+              لاب
             </button>
           </div>
         </div>
@@ -413,6 +439,7 @@ export default function Home() {
           {viewMode === 'questions' && <QuestionsView />}
           {viewMode === 'subnetting' && <SubnettingView />}
           {viewMode === 'flashcards' && <FlashcardsView />}
+          {viewMode === 'labs' && <LabsView />}
         </main>
       </div>
     </div>
@@ -797,6 +824,90 @@ function FlashcardsView() {
             </div>
             <div className="text-xs text-muted-foreground text-center">
               © 2026 Z.ai Network Engineering &middot; 80 Flashcards for Rapid Revision
+            </div>
+          </div>
+        </div>
+      </footer>
+    </>
+  );
+}
+
+// ===================== Labs View =====================
+function LabsView() {
+  return (
+    <>
+      {/* Hero for Labs */}
+      <section className="relative overflow-hidden bg-gradient-to-br from-[#002b5c] via-[#001a3d] to-[#049fd9] text-white">
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-10 right-10 w-72 h-72 rounded-full bg-cyan-300 blur-3xl" />
+          <div className="absolute bottom-10 left-10 w-96 h-96 rounded-full bg-blue-500 blur-3xl" />
+        </div>
+        <div className="container mx-auto max-w-6xl px-6 py-14 relative z-10">
+          <div className="flex items-center gap-2 mb-4">
+            <Badge className="bg-purple-500/20 border-purple-400/40 text-purple-200 hover:bg-purple-500/30">
+              <FlaskConical className="h-3 w-3 ml-1" />
+              Practical Lab Topologies
+            </Badge>
+            <Badge variant="outline" className="border-white/30 text-white hover:bg-white/10">
+              6 سيناريوهات
+            </Badge>
+            <Badge variant="outline" className="border-white/30 text-white hover:bg-white/10">
+              خطوة بخوة
+            </Badge>
+          </div>
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-black mb-4 leading-tight">
+            سيناريوهات عملية للتدريب
+          </h1>
+          <p className="text-lg md:text-xl text-cyan-100 mb-2 font-mono" dir="ltr">
+            Practical Lab Topologies - Step by Step
+          </p>
+          <p className="text-base md:text-lg text-blue-100/80 max-w-3xl leading-relaxed">
+            سيناريوهات حقيقية لبناء شبكات سيسكو من الصفر. كل سيناريو يحوي:
+            الأهداف، الطوبولوجيا، خطوات الإعداد الكاملة مع الأوامر، التحقق، والمشاكل الشائعة.
+            مصممة لتطبيقها على Packet Tracer، GNS3، أو EVE-NG.
+          </p>
+
+          {/* Features */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-10">
+            {[
+              { icon: Target, label: 'أهداف واضحة', desc: 'لخل سيناريو' },
+              { icon: Network, label: 'طوبولوجيا', desc: 'مرسومة بالأوامر' },
+              { icon: Check, label: 'تحقق', desc: 'show commands' },
+              { icon: AlertTriangle, label: 'مشاكل شائعة', desc: 'وحلولها' },
+            ].map((feat, i) => {
+              const Icon = feat.icon;
+              return (
+                <div key={i} className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-3 text-center">
+                  <Icon className="h-5 w-5 mx-auto mb-1 text-cyan-300" />
+                  <div className="text-sm font-bold">{feat.label}</div>
+                  <div className="text-[10px] text-blue-100/80">{feat.desc}</div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* Labs Component */}
+      <div className="container mx-auto max-w-6xl px-4 md:px-6 py-8">
+        <Labs />
+      </div>
+
+      {/* Footer */}
+      <footer className="border-t border-border bg-muted/30 mt-12">
+        <div className="container mx-auto max-w-6xl px-6 py-8">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-[#002b5c] to-[#049fd9] text-white">
+                <FlaskConical size={16} />
+              </div>
+              <div>
+                <div className="text-sm font-bold">سيناريوهات عملية للتدريب</div>
+                <div className="text-xs text-muted-foreground">Practical Lab Topologies</div>
+              </div>
+            </div>
+            <div className="text-xs text-muted-foreground text-center">
+              © 2026 Z.ai Network Engineering &middot; 6 Practical Scenarios for Hands-on Training
             </div>
           </div>
         </div>
