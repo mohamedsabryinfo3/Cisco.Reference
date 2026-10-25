@@ -1,0 +1,231 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-cairo);
+  --font-mono: var(--font-mono);
+  --font-inter: var(--font-inter);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+:root {
+  --radius: 0.5rem;
+  /* Cisco Tech Color Palette */
+  --background: #ffffff;
+  --foreground: #1a1a1a;
+  --card: #ffffff;
+  --card-foreground: #1a1a1a;
+  --popover: #ffffff;
+  --popover-foreground: #1a1a1a;
+  --primary: #049fd9;
+  --primary-foreground: #ffffff;
+  --secondary: #e0f4fa;
+  --secondary-foreground: #002b5c;
+  --muted: #f4f6f9;
+  --muted-foreground: #4a4a4a;
+  --accent: #00bceb;
+  --accent-foreground: #002b5c;
+  --destructive: #c0392b;
+  --border: #d1d9e0;
+  --input: #d1d9e0;
+  --ring: #049fd9;
+  --chart-1: #049fd9;
+  --chart-2: #00bceb;
+  --chart-3: #002b5c;
+  --chart-4: #27ae60;
+  --chart-5: #e74c3c;
+  --sidebar: #f8fbfc;
+  --sidebar-foreground: #1a1a1a;
+  --sidebar-primary: #049fd9;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #e0f4fa;
+  --sidebar-accent-foreground: #002b5c;
+  --sidebar-border: #d1d9e0;
+  --sidebar-ring: #049fd9;
+  /* Cisco custom */
+  --cisco-blue: #049fd9;
+  --cisco-turq: #00bceb;
+  --cisco-dark: #002b5c;
+  --cisco-light: #e0f4fa;
+  --cisco-code-bg: #f4f6f9;
+  --cisco-tip: #fff7e0;
+  --cisco-warn: #fdecec;
+  --cisco-success: #f0f8f4;
+}
+
+.dark {
+  --background: #0f1419;
+  --foreground: #e8e6e3;
+  --card: #1a2230;
+  --card-foreground: #e8e6e3;
+  --popover: #1a2230;
+  --popover-foreground: #e8e6e3;
+  --primary: #049fd9;
+  --primary-foreground: #ffffff;
+  --secondary: #1a2b3c;
+  --secondary-foreground: #e8e6e3;
+  --muted: #1f2a36;
+  --muted-foreground: #9aa5b1;
+  --accent: #00bceb;
+  --accent-foreground: #002b5c;
+  --destructive: #e74c3c;
+  --border: #2a3645;
+  --input: #2a3645;
+  --ring: #049fd9;
+  --chart-1: #049fd9;
+  --chart-2: #00bceb;
+  --chart-3: #4a90e2;
+  --chart-4: #2ecc71;
+  --chart-5: #e74c3c;
+  --sidebar: #0a0f15;
+  --sidebar-foreground: #e8e6e3;
+  --sidebar-primary: #049fd9;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #1a2b3c;
+  --sidebar-accent-foreground: #e8e6e3;
+  --sidebar-border: #2a3645;
+  --sidebar-ring: #049fd9;
+  --cisco-blue: #049fd9;
+  --cisco-turq: #00bceb;
+  --cisco-dark: #4a90e2;
+  --cisco-light: #1a2b3c;
+  --cisco-code-bg: #1a2230;
+  --cisco-tip: #2a2516;
+  --cisco-warn: #2a1616;
+  --cisco-success: #16281a;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "kern" 1, "liga" 1;
+  }
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 5px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--cisco-blue);
+  }
+  /* Selection */
+  ::selection {
+    background: var(--cisco-blue);
+    color: white;
+  }
+}
+
+/* RTL fixes for code blocks */
+.code-ltr {
+  direction: ltr !important;
+  text-align: left !important;
+  font-family: var(--font-mono), 'Courier New', monospace;
+}
+
+/* Custom utility classes */
+.cisco-gradient {
+  background: linear-gradient(135deg, #002b5c 0%, #049fd9 100%);
+}
+
+.cisco-text-gradient {
+  background: linear-gradient(135deg, #049fd9 0%, #00bceb 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.glass-effect {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.dark .glass-effect {
+  background: rgba(26, 34, 48, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* RTL: ensure command tables are LTR */
+.cmd-table code,
+.cmd-text,
+.code-block-pre {
+  direction: ltr !important;
+  text-align: left !important;
+  display: inline-block;
+}
+
+/* Smooth scroll for navigation */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Hide scrollbar for sidebar on webkit */
+.sidebar-scroll::-webkit-scrollbar {
+  width: 4px;
+}
+.sidebar-scroll::-webkit-scrollbar-thumb {
+  background: var(--cisco-blue);
+  opacity: 0.5;
+}
+
+/* Animation utilities */
+@keyframes slide-in {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-slide-in {
+  animation: slide-in 0.3s ease-out;
+}
+
+/* RTL: ensure flex direction works */
+[dir="rtl"] .rtl-flip {
+  flex-direction: row-reverse;
+}
