@@ -168,6 +168,32 @@
   font-family: var(--font-mono), 'Courier New', monospace;
 }
 
+/* CRITICAL: Bidi isolation for mixed Arabic/English text
+   Solves the "reversed Arabic" issue when commands appear inside Arabic text */
+.cmd-inline {
+  direction: ltr;
+  unicode-bidi: isolate;
+  display: inline-block;
+  font-family: var(--font-mono), 'JetBrains Mono', 'Courier New', monospace;
+}
+
+/* Ensure table cells with mixed content render properly */
+td .mixed-content,
+.mixed-text {
+  unicode-bidi: plaintext;
+}
+
+/* For paragraphs that may contain inline English commands */
+p, li, span, div {
+  unicode-bidi: plaintext;
+}
+
+/* Exceptions: explicitly LTR elements */
+code, pre, kbd, samp {
+  unicode-bidi: isolate;
+  direction: ltr;
+}
+
 /* Custom utility classes */
 .cisco-gradient {
   background: linear-gradient(135deg, #002b5c 0%, #049fd9 100%);
@@ -228,4 +254,42 @@ html {
 /* RTL: ensure flex direction works */
 [dir="rtl"] .rtl-flip {
   flex-direction: row-reverse;
+}
+
+/* Flashcard 3D flip support */
+.transform {
+  transform-style: preserve-3d;
+}
+
+.rotate-y-180 {
+  transform: rotateY(180deg);
+}
+
+/* Larger font sizes for better readability */
+@media (min-width: 768px) {
+  body {
+    font-size: 15px;
+  }
+}
+
+/* Command cells - ensure LTR display inside RTL tables */
+.cmd-cell {
+  direction: ltr;
+  text-align: left;
+  unicode-bidi: isolate;
+  display: inline-block;
+  font-family: var(--font-mono), 'JetBrains Mono', monospace;
+}
+
+/* Explanation cells - allow mixed content */
+.explanation-cell {
+  unicode-bidi: plaintext;
+}
+
+/* Inline code in Arabic text - force LTR isolation */
+:not(pre) > code,
+:not(pre) > kbd {
+  direction: ltr;
+  unicode-bidi: isolate;
+  display: inline-block;
 }

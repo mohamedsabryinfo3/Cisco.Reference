@@ -4,6 +4,8 @@ import { useState, useMemo, useEffect } from 'react';
 import { ALL_SECTIONS, SEARCH_INDEX } from '@/data';
 import type { Section, SubSection, Command } from '@/data';
 import { QuestionBank } from '@/components/QuestionBank';
+import { SubnetCalculator } from '@/components/SubnetCalculator';
+import { Flashcards } from '@/components/Flashcards';
 import {
   Search,
   BookOpen,
@@ -46,6 +48,7 @@ import {
   Brain,
   Award,
   ChevronLeft,
+  Calculator,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -81,7 +84,7 @@ const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
   Lightbulb,
 };
 
-type ViewMode = 'commands' | 'questions';
+type ViewMode = 'commands' | 'questions' | 'subnetting' | 'flashcards';
 
 export default function Home() {
   const [viewMode, setViewMode] = useState<ViewMode>('commands');
@@ -249,6 +252,30 @@ export default function Home() {
                   <Brain className="h-3.5 w-3.5" />
                   بنك الأسئلة
                 </button>
+                <button
+                  onClick={() => setViewMode('subnetting')}
+                  className={cn(
+                    'flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition',
+                    viewMode === 'subnetting'
+                      ? 'bg-background shadow-sm text-[#049fd9]'
+                      : 'text-muted-foreground hover:text-foreground'
+                  )}
+                >
+                  <Calculator className="h-3.5 w-3.5" />
+                  حاسبة Subnet
+                </button>
+                <button
+                  onClick={() => setViewMode('flashcards')}
+                  className={cn(
+                    'flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition',
+                    viewMode === 'flashcards'
+                      ? 'bg-background shadow-sm text-[#049fd9]'
+                      : 'text-muted-foreground hover:text-foreground'
+                  )}
+                >
+                  <Layers className="h-3.5 w-3.5" />
+                  فلاش كارد
+                </button>
               </div>
 
               <Button
@@ -264,11 +291,11 @@ export default function Home() {
           </div>
 
           {/* Mobile View Mode Toggle */}
-          <div className="md:hidden flex items-center bg-muted rounded-lg p-0.5 mb-2">
+          <div className="md:hidden flex items-center bg-muted rounded-lg p-0.5 mb-2 overflow-x-auto">
             <button
               onClick={() => setViewMode('commands')}
               className={cn(
-                'flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition',
+                'flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition whitespace-nowrap',
                 viewMode === 'commands'
                   ? 'bg-background shadow-sm text-[#049fd9]'
                   : 'text-muted-foreground'
@@ -280,7 +307,7 @@ export default function Home() {
             <button
               onClick={() => setViewMode('questions')}
               className={cn(
-                'flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition',
+                'flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition whitespace-nowrap',
                 viewMode === 'questions'
                   ? 'bg-background shadow-sm text-[#049fd9]'
                   : 'text-muted-foreground'
@@ -288,6 +315,30 @@ export default function Home() {
             >
               <Brain className="h-3.5 w-3.5" />
               بنك الأسئلة
+            </button>
+            <button
+              onClick={() => setViewMode('subnetting')}
+              className={cn(
+                'flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition whitespace-nowrap',
+                viewMode === 'subnetting'
+                  ? 'bg-background shadow-sm text-[#049fd9]'
+                  : 'text-muted-foreground'
+              )}
+            >
+              <Calculator className="h-3.5 w-3.5" />
+              حاسبة
+            </button>
+            <button
+              onClick={() => setViewMode('flashcards')}
+              className={cn(
+                'flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition whitespace-nowrap',
+                viewMode === 'flashcards'
+                  ? 'bg-background shadow-sm text-[#049fd9]'
+                  : 'text-muted-foreground'
+              )}
+            >
+              <Layers className="h-3.5 w-3.5" />
+              فلاش
             </button>
           </div>
         </div>
@@ -352,15 +403,16 @@ export default function Home() {
 
         {/* Main content */}
         <main className="flex-1 min-w-0">
-          {viewMode === 'commands' ? (
+          {viewMode === 'commands' && (
             <CommandsView
               onNavigateToSection={scrollToSection}
               copiedCmd={copiedCmd}
               onCopy={copyToClipboard}
             />
-          ) : (
-            <QuestionsView />
           )}
+          {viewMode === 'questions' && <QuestionsView />}
+          {viewMode === 'subnetting' && <SubnettingView />}
+          {viewMode === 'flashcards' && <FlashcardsView />}
         </main>
       </div>
     </div>
@@ -582,6 +634,177 @@ function QuestionsView() {
   );
 }
 
+// ===================== Subnetting View =====================
+function SubnettingView() {
+  return (
+    <>
+      {/* Hero for Subnetting */}
+      <section className="relative overflow-hidden bg-gradient-to-br from-[#002b5c] via-[#001a3d] to-[#049fd9] text-white">
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-10 right-10 w-72 h-72 rounded-full bg-cyan-300 blur-3xl" />
+          <div className="absolute bottom-10 left-10 w-96 h-96 rounded-full bg-blue-500 blur-3xl" />
+        </div>
+        <div className="container mx-auto max-w-6xl px-6 py-14 relative z-10">
+          <div className="flex items-center gap-2 mb-4">
+            <Badge className="bg-cyan-500/20 border-cyan-400/40 text-cyan-200 hover:bg-cyan-500/30">
+              <Calculator className="h-3 w-3 ml-1" />
+              SubnetPro - Professional Tool
+            </Badge>
+            <Badge variant="outline" className="border-white/30 text-white hover:bg-white/10">
+              IP Analysis
+            </Badge>
+            <Badge variant="outline" className="border-white/30 text-white hover:bg-white/10">
+              VLSM Calculator
+            </Badge>
+            <Badge variant="outline" className="border-white/30 text-white hover:bg-white/10">
+              CIDR Reference
+            </Badge>
+          </div>
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-black mb-4 leading-tight">
+            حاسبة الشبكات الاحترافية
+          </h1>
+          <p className="text-lg md:text-xl text-cyan-100 mb-2 font-mono" dir="ltr">
+            SubnetPro — Professional Subnet Calculator
+          </p>
+          <p className="text-base md:text-lg text-blue-100/80 max-w-3xl leading-relaxed">
+            حاسبة subnetting متقدمة: تحليل IP/PREFIX، تقسيم الشبكات حسب عدد الأجهزة (VLSM)،
+            جدول CIDR شامل، وأصناف عناوين IP. مع أوامر Cisco الجاهزة والتمثيل الثنائي 32-بت.
+            مصممة للاعتماد عليها في المذاكرة والامتحان والـ lab.
+          </p>
+
+          {/* Features */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-10">
+            {[
+              { icon: Calculator, label: 'تحليل IP', desc: 'Network/Broadcast/Hosts' },
+              { icon: Layers, label: 'VLSM', desc: 'تقسيم حسب المضيفين' },
+              { icon: Grid3x3, label: 'جدول CIDR', desc: 'مرجع كامل' },
+              { icon: Terminal, label: 'أوامر Cisco', desc: 'جاهزة للنسخ' },
+            ].map((feat, i) => {
+              const Icon = feat.icon;
+              return (
+                <div key={i} className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-3 text-center">
+                  <Icon className="h-5 w-5 mx-auto mb-1 text-cyan-300" />
+                  <div className="text-sm font-bold">{feat.label}</div>
+                  <div className="text-[10px] text-blue-100/80">{feat.desc}</div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* Subnet Calculator Component */}
+      <div className="container mx-auto max-w-6xl px-4 md:px-6 py-8">
+        <SubnetCalculator />
+      </div>
+
+      {/* Footer */}
+      <footer className="border-t border-border bg-muted/30 mt-12">
+        <div className="container mx-auto max-w-6xl px-6 py-8">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-[#002b5c] to-[#049fd9] text-white">
+                <Calculator size={16} />
+              </div>
+              <div>
+                <div className="text-sm font-bold">حاسبة الشبكات الاحترافية</div>
+                <div className="text-xs text-muted-foreground">SubnetPro - Subnet Calculator</div>
+              </div>
+            </div>
+            <div className="text-xs text-muted-foreground text-center">
+              © 2026 Z.ai Network Engineering &middot; Professional Subnetting Tool
+            </div>
+          </div>
+        </div>
+      </footer>
+    </>
+  );
+}
+
+// ===================== Flashcards View =====================
+function FlashcardsView() {
+  return (
+    <>
+      {/* Hero for Flashcards */}
+      <section className="relative overflow-hidden bg-gradient-to-br from-[#002b5c] via-[#001a3d] to-[#049fd9] text-white">
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-10 left-10 w-72 h-72 rounded-full bg-cyan-300 blur-3xl" />
+          <div className="absolute bottom-10 right-10 w-96 h-96 rounded-full bg-blue-500 blur-3xl" />
+        </div>
+        <div className="container mx-auto max-w-6xl px-6 py-14 relative z-10">
+          <div className="flex items-center gap-2 mb-4">
+            <Badge className="bg-purple-500/20 border-purple-400/40 text-purple-200 hover:bg-purple-500/30">
+              <Layers className="h-3 w-3 ml-1" />
+              Interactive Flashcards
+            </Badge>
+            <Badge variant="outline" className="border-white/30 text-white hover:bg-white/10">
+              80 بطاقة
+            </Badge>
+            <Badge variant="outline" className="border-white/30 text-white hover:bg-white/10">
+              6 فئات
+            </Badge>
+          </div>
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-black mb-4 leading-tight">
+            بطاقات المراجعة السريعة
+          </h1>
+          <p className="text-lg md:text-xl text-cyan-100 mb-2 font-mono" dir="ltr">
+            Interactive Flashcards for Rapid Revision
+          </p>
+          <p className="text-base md:text-lg text-blue-100/80 max-w-3xl leading-relaxed">
+            80 بطاقة تعليمية لمراجعة سريعة لكل مفاهيم CCNA و CCNP.
+            اقلب البطاقة لرؤية الإجابة، علّم المفهومة، ورتّب عشوائياً.
+            مع اختصارات لوحة المفاتيح للتنقل السريع.
+          </p>
+
+          {/* Features */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-10">
+            {[
+              { icon: Brain, label: 'حفظ نشط', desc: 'Active Recall' },
+              { icon: Layers, label: '6 فئات', desc: 'Fundamentals→Advanced' },
+              { icon: Check, label: 'تتبع التقدم', desc: 'ما تعلمته' },
+              { icon: Zap, label: 'اختصارات', desc: 'Keyboard Shortcuts' },
+            ].map((feat, i) => {
+              const Icon = feat.icon;
+              return (
+                <div key={i} className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-3 text-center">
+                  <Icon className="h-5 w-5 mx-auto mb-1 text-cyan-300" />
+                  <div className="text-sm font-bold">{feat.label}</div>
+                  <div className="text-[10px] text-blue-100/80">{feat.desc}</div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* Flashcards Component */}
+      <div className="container mx-auto max-w-6xl px-4 md:px-6 py-8">
+        <Flashcards />
+      </div>
+
+      {/* Footer */}
+      <footer className="border-t border-border bg-muted/30 mt-12">
+        <div className="container mx-auto max-w-6xl px-6 py-8">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-[#002b5c] to-[#049fd9] text-white">
+                <Layers size={16} />
+              </div>
+              <div>
+                <div className="text-sm font-bold">بطاقات المراجعة السريعة</div>
+                <div className="text-xs text-muted-foreground">Interactive Flashcards</div>
+              </div>
+            </div>
+            <div className="text-xs text-muted-foreground text-center">
+              © 2026 Z.ai Network Engineering &middot; 80 Flashcards for Rapid Revision
+            </div>
+          </div>
+        </div>
+      </footer>
+    </>
+  );
+}
+
 // ===================== Section Renderer =====================
 function SectionRenderer({
   section,
@@ -671,7 +894,7 @@ function SubSectionRenderer({
       <div className="p-4 md:p-5">
         {/* Body Text */}
         {subsection.bodyText && (
-          <p className="text-[13.5px] text-foreground leading-relaxed mb-4 text-justify">
+          <p className="text-[15px] text-foreground leading-relaxed mb-4 text-justify">
             {subsection.bodyText}
           </p>
         )}
@@ -679,7 +902,7 @@ function SubSectionRenderer({
         {/* Table */}
         {subsection.table && (
           <div className="mb-4 overflow-x-auto rounded-lg border border-border">
-            <table className="w-full text-[12px]">
+            <table className="w-full text-[14px]">
               <thead>
                 <tr className="bg-[#002b5c] text-white">
                   {subsection.table.headers.map((h, i) => (
@@ -695,7 +918,7 @@ function SubSectionRenderer({
                     {row.map((cell, ci) => (
                       <td key={ci} className="px-3 py-2 border-b border-border/40 align-top">
                         {isLikelyCommand(cell) ? (
-                          <span dir="ltr" className="font-mono text-[11.5px] inline-block text-[#b1272b] dark:text-[#ff6b6b] bg-red-50 dark:bg-red-950/20 px-1.5 py-0.5 rounded">
+                          <span dir="ltr" className="font-mono text-[13px] inline-block text-[#b1272b] dark:text-[#ff6b6b] bg-red-50 dark:bg-red-950/20 px-1.5 py-0.5 rounded">
                             {cell}
                           </span>
                         ) : (
@@ -714,8 +937,8 @@ function SubSectionRenderer({
         {subsection.list && (
           <ol className="space-y-2 mb-4 pr-6 list-decimal">
             {subsection.list.map((item, i) => (
-              <li key={i} className="text-[12.5px] text-foreground leading-relaxed">
-                <span className="inline-block bg-[#049fd9]/10 text-[#049fd9] text-[10px] font-mono px-1.5 py-0.5 rounded ml-2 align-middle">
+              <li key={i} className="text-[14px] text-foreground leading-relaxed">
+                <span className="inline-block bg-[#049fd9]/10 text-[#049fd9] text-[12px] font-mono px-1.5 py-0.5 rounded ml-2 align-middle">
                   {i + 1}
                 </span>
                 {item}
@@ -727,7 +950,7 @@ function SubSectionRenderer({
         {/* Commands Table */}
         {subsection.commands && subsection.commands.length > 0 && (
           <div className="overflow-x-auto rounded-lg border border-border">
-            <table className="w-full text-[11.5px]">
+            <table className="w-full text-[13px]">
               <thead>
                 <tr className="bg-[#002b5c] text-white">
                   <th className="px-2 py-2 text-right font-semibold w-[28%]">الأمر (Command)</th>
@@ -804,7 +1027,7 @@ function CommandRow({
           </button>
           <code
             dir="ltr"
-            className="text-left font-mono text-[11px] text-[#b1272b] dark:text-[#ff6b6b] bg-red-50 dark:bg-red-950/20 px-1.5 py-0.5 rounded block break-all leading-relaxed"
+            className="text-left font-mono text-[13px] text-[#b1272b] dark:text-[#ff6b6b] bg-red-50 dark:bg-red-950/20 px-1.5 py-0.5 rounded block break-all leading-relaxed"
           >
             {cmd.command}
           </code>
@@ -818,14 +1041,14 @@ function CommandRow({
 
       {/* Mode */}
       <td className="px-2 py-2 align-top">
-        <span dir="ltr" className="text-left font-mono text-[10.5px] text-[#049fd9] dark:text-[#00bceb] font-semibold whitespace-nowrap bg-[#049fd9]/10 px-1.5 py-0.5 rounded">
+        <span dir="ltr" className="text-left font-mono text-[12px] text-[#049fd9] dark:text-[#00bceb] font-semibold whitespace-nowrap bg-[#049fd9]/10 px-1.5 py-0.5 rounded">
           {cmd.mode}
         </span>
       </td>
 
       {/* Explanation */}
       <td className="px-2 py-2 align-top">
-        <p className="text-[12px] text-foreground/85 leading-relaxed">
+        <p className="text-[14px] text-foreground/85 leading-relaxed">
           {cmd.explanation}
         </p>
       </td>
@@ -836,7 +1059,7 @@ function CommandRow({
           <div className="mb-1">
             <button
               onClick={() => setExpanded(!expanded)}
-              className="text-[10px] text-[#049fd9] hover:underline flex items-center gap-1"
+              className="text-[12px] text-[#049fd9] hover:underline flex items-center gap-1"
             >
               {expanded ? <ChevronDown className="h-3 w-3" /> : <ChevronDown className="h-3 w-3 rotate-[-90deg]" />}
               {expanded ? 'إخفاء المثال' : 'عرض المثال'}
@@ -844,7 +1067,7 @@ function CommandRow({
             {expanded && (
               <pre
                 dir="ltr"
-                className="mt-1 text-left font-mono text-[10px] bg-muted dark:bg-muted/40 px-2 py-1.5 rounded border border-border overflow-x-auto whitespace-pre-wrap"
+                className="mt-1 text-left font-mono text-[12px] bg-muted dark:bg-muted/40 px-2 py-1.5 rounded border border-border overflow-x-auto whitespace-pre-wrap"
               >
                 {cmd.example}
               </pre>
@@ -852,8 +1075,8 @@ function CommandRow({
           </div>
         )}
         {cmd.noCommand && cmd.noCommand !== 'N/A' && (
-          <div className="text-[10px] text-muted-foreground italic font-mono" dir="ltr">
-            <span className="text-[10px]">↩ no:</span> {cmd.noCommand}
+          <div className="text-[12px] text-muted-foreground italic font-mono" dir="ltr">
+            <span className="text-[12px]">↩ no:</span> {cmd.noCommand}
           </div>
         )}
       </td>
@@ -903,10 +1126,10 @@ function TipBox({ tip }: { tip: NonNullable<SubSection['tip']> }) {
           <Icon size={14} />
         </div>
         <div className="flex-1 min-w-0">
-          <div className={`text-[12.5px] font-bold mb-1 ${c.title}`}>
+          <div className={`text-[14px] font-bold mb-1 ${c.title}`}>
             {tip.title}
           </div>
-          <div className={`text-[12.5px] leading-relaxed ${c.body}`}>
+          <div className={`text-[14px] leading-relaxed ${c.body}`}>
             {tip.body}
           </div>
         </div>

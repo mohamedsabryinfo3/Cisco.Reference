@@ -46,6 +46,7 @@ export default function RootLayout({
     <html lang="ar" dir="rtl" suppressHydrationWarning>
       <body
         className={`${cairo.variable} ${jetbrainsMono.variable} ${inter.variable} antialiased bg-background text-foreground font-sans`}
+        style={{ fontSize: '15px' }}
       >
         {children}
         <Toaster />
